@@ -1,0 +1,472 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>محول الدرهم</title>
+<!-- ====================================================================
+     HilltopAds — كود التحقق من الموقع (Site Verification)
+     بعد ما تدير "Add Site" فلوحة تحكم HilltopAds، غادي يعطيوك meta tag
+     أو ملف تحقق. الصق meta tag ديالهم هنا، تحت هاد التعليق مباشرة.
+     مثال: <meta name="hilltopads-site-verification" content="xxxxxxxx">
+     ==================================================================== -->
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400;9..144,500;9..144,600&family=Tajawal:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --sand: #F1E8D5;
+    --card: #FBF7EE;
+    --teal: #16505F;
+    --teal-deep: #103C47;
+    --ink: #201C16;
+    --rust: #A6431F;
+    --gold: #B8892B;
+    --line: rgba(32,28,22,0.12);
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0; padding:0;
+    background: var(--sand);
+    color: var(--ink);
+    font-family: 'Tajawal', sans-serif;
+    min-height: 100vh;
+  }
+
+  body{
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding: 40px 20px;
+    position: relative;
+    overflow-x: hidden;
+  }
+
+  /* signature: faint zellige star field watermark */
+  .zellige-bg{
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .wrap{
+    position: relative;
+    z-index: 1;
+    width: 100%;
+    max-width: 420px;
+  }
+
+  .eyebrow{
+    text-align:center;
+    font-size: 13px;
+    letter-spacing: 0.04em;
+    color: var(--teal);
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  h1{
+    font-family: 'Tajawal', sans-serif;
+    font-weight: 900;
+    font-size: 28px;
+    text-align: center;
+    margin: 0 0 28px 0;
+    color: var(--ink);
+  }
+
+  .card{
+    background: var(--card);
+    border-radius: 22px;
+    padding: 28px 24px 22px;
+    box-shadow: 0 1px 2px rgba(32,28,22,0.06), 0 12px 32px -12px rgba(16,60,71,0.28);
+    border: 1px solid var(--line);
+  }
+
+  .field-label{
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal-deep);
+    margin-bottom: 8px;
+    display:block;
+  }
+
+  .amount-row{
+    display:flex;
+    align-items:baseline;
+    gap: 8px;
+    border-bottom: 2px solid var(--teal);
+    padding-bottom: 10px;
+    margin-bottom: 22px;
+  }
+
+  .amount-row input{
+    flex:1;
+    border:none;
+    background: transparent;
+    font-family: 'Fraunces', serif;
+    font-size: 40px;
+    font-weight: 500;
+    color: var(--ink);
+    outline: none;
+    width: 100%;
+    min-width: 0;
+    direction: ltr;
+    text-align: right;
+  }
+
+  .amount-row .unit{
+    font-size: 16px;
+    font-weight: 700;
+    color: var(--teal);
+    white-space: nowrap;
+  }
+
+  .rows{
+    display:flex;
+    align-items:center;
+    gap: 10px;
+    margin-bottom: 18px;
+  }
+
+  select{
+    flex:1;
+    appearance: none;
+    -webkit-appearance: none;
+    background: #fff;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    padding: 12px 14px;
+    font-family: 'Tajawal', sans-serif;
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--ink);
+    cursor: pointer;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='12' height='8' viewBox='0 0 12 8'><path d='M1 1L6 6L11 1' stroke='%23201C16' stroke-width='1.5' fill='none' stroke-linecap='round'/></svg>");
+    background-repeat: no-repeat;
+    background-position: left 14px center;
+    padding-left: 30px;
+  }
+
+  .swap-btn{
+    flex-shrink:0;
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    border: none;
+    background: var(--teal);
+    color: #fff;
+    cursor: pointer;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    transition: transform 0.15s ease, background 0.15s ease;
+  }
+  .swap-btn:hover{ background: var(--teal-deep); transform: rotate(180deg); }
+  .swap-btn svg{ width:18px; height:18px; }
+
+  .result-box{
+    background: linear-gradient(135deg, var(--teal) 0%, var(--teal-deep) 100%);
+    border-radius: 16px;
+    padding: 20px;
+    text-align: center;
+    margin-bottom: 16px;
+  }
+
+  .result-label{
+    color: rgba(255,255,255,0.72);
+    font-size: 12px;
+    font-weight: 700;
+    margin-bottom: 6px;
+  }
+
+  .result-value{
+    font-family: 'Fraunces', serif;
+    color: #fff;
+    font-size: 34px;
+    font-weight: 500;
+    direction: ltr;
+  }
+
+  .rate-note{
+    text-align:center;
+    font-size: 12px;
+    color: rgba(32,28,22,0.55);
+    margin-bottom: 4px;
+  }
+
+  .adjust-toggle{
+    text-align:center;
+    margin-top: 8px;
+  }
+  .adjust-toggle button{
+    background:none;
+    border:none;
+    color: var(--rust);
+    font-family:'Tajawal',sans-serif;
+    font-weight: 700;
+    font-size: 12.5px;
+    cursor:pointer;
+    text-decoration: underline;
+    text-underline-offset: 3px;
+    padding: 4px;
+  }
+
+  .manual-rate{
+    display:none;
+    margin-top: 12px;
+    padding-top: 14px;
+    border-top: 1px dashed var(--line);
+  }
+  .manual-rate.open{ display:block; }
+  .manual-rate label{
+    font-size: 12px;
+    font-weight: 700;
+    color: var(--teal-deep);
+    display:block;
+    margin-bottom: 6px;
+  }
+  .manual-rate input{
+    width:100%;
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 10px 12px;
+    font-family:'Tajawal',sans-serif;
+    font-size: 14px;
+    direction: ltr;
+    text-align: right;
+  }
+  .manual-rate .hint{
+    font-size: 11px;
+    color: rgba(32,28,22,0.5);
+    margin-top: 6px;
+  }
+
+  .ad-slot{
+    margin-top: 18px;
+    padding: 18px;
+    border: 1px dashed rgba(32,28,22,0.25);
+    border-radius: 14px;
+    text-align: center;
+    background: rgba(255,255,255,0.4);
+    min-height: 60px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+  }
+  .ad-label{
+    font-size: 11.5px;
+    color: rgba(32,28,22,0.4);
+    font-weight: 700;
+    letter-spacing: 0.03em;
+  }
+
+  footer{
+    text-align:center;
+    font-size: 11.5px;
+    color: rgba(32,28,22,0.45);
+    margin-top: 18px;
+    line-height: 1.6;
+  }
+
+  @media (prefers-reduced-motion: reduce){
+    .swap-btn{ transition:none; }
+  }
+</style>
+</head>
+<body>
+
+<svg class="zellige-bg" viewBox="0 0 400 700" preserveAspectRatio="xMidYMid slice">
+  <defs>
+    <g id="star">
+      <path d="M0,-18 L5,-5 L18,0 L5,5 L0,18 L-5,5 L-18,0 L-5,-5 Z" fill="#16505F" opacity="0.06"/>
+      <path d="M0,-18 L5,-5 L18,0 L5,5 L0,18 L-5,5 L-18,0 L-5,-5 Z" fill="none" stroke="#B8892B" stroke-width="0.6" opacity="0.10"/>
+    </g>
+  </defs>
+  <g>
+    <use href="#star" x="40" y="60"/><use href="#star" x="120" y="60"/><use href="#star" x="200" y="60"/><use href="#star" x="280" y="60"/><use href="#star" x="360" y="60"/>
+    <use href="#star" x="80" y="130"/><use href="#star" x="160" y="130"/><use href="#star" x="240" y="130"/><use href="#star" x="320" y="130"/>
+    <use href="#star" x="40" y="200"/><use href="#star" x="120" y="200"/><use href="#star" x="200" y="200"/><use href="#star" x="280" y="200"/><use href="#star" x="360" y="200"/>
+    <use href="#star" x="80" y="270"/><use href="#star" x="160" y="270"/><use href="#star" x="240" y="270"/><use href="#star" x="320" y="270"/>
+    <use href="#star" x="40" y="340"/><use href="#star" x="120" y="340"/><use href="#star" x="200" y="340"/><use href="#star" x="280" y="340"/><use href="#star" x="360" y="340"/>
+    <use href="#star" x="80" y="410"/><use href="#star" x="160" y="410"/><use href="#star" x="240" y="410"/><use href="#star" x="320" y="410"/>
+    <use href="#star" x="40" y="480"/><use href="#star" x="120" y="480"/><use href="#star" x="200" y="480"/><use href="#star" x="280" y="480"/><use href="#star" x="360" y="480"/>
+    <use href="#star" x="80" y="550"/><use href="#star" x="160" y="550"/><use href="#star" x="240" y="550"/><use href="#star" x="320" y="550"/>
+    <use href="#star" x="40" y="620"/><use href="#star" x="120" y="620"/><use href="#star" x="200" y="620"/><use href="#star" x="280" y="620"/><use href="#star" x="360" y="620"/>
+  </g>
+</svg>
+
+<div class="wrap">
+  <div class="eyebrow">للاستخدام اليومي</div>
+  <h1>محول الدرهم المغربي</h1>
+
+  <div class="card">
+    <span class="field-label">المبلغ</span>
+    <div class="amount-row">
+      <input type="number" id="amount" value="100" inputmode="decimal">
+      <span class="unit" id="fromUnit">د.م.</span>
+    </div>
+
+    <div class="rows">
+      <select id="fromCurrency"></select>
+      <button class="swap-btn" id="swapBtn" aria-label="بدّل الاتجاه">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M17 3L21 7L17 11"/><path d="M21 7H9"/>
+          <path d="M7 21L3 17L7 13"/><path d="M3 17H15"/>
+        </svg>
+      </button>
+      <select id="toCurrency"></select>
+    </div>
+
+    <div class="result-box">
+      <div class="result-label">القيمة المحوّلة</div>
+      <div class="result-value" id="resultValue">—</div>
+    </div>
+
+    <div class="rate-note" id="rateNote">—</div>
+
+    <div class="adjust-toggle">
+      <button id="toggleManual">تعديل السعر يدويًا</button>
+    </div>
+
+    <div class="manual-rate" id="manualRate">
+      <label>سعر الصرف المخصص (1 وحدة أجنبية = كم درهم)</label>
+      <input type="number" id="customRate" step="0.0001">
+      <div class="hint">إذا عندك سعر أدق (من الصرافة أو البنك)، دخّلو هنا وغادي يتستعمل مباشرة.</div>
+    </div>
+  </div>
+
+  <!-- ====================================================================
+       مكان إعلان HilltopAds
+       باش تفعّل الإعلان الحقيقي هنا:
+       1) سجل حساب فـ hilltopads.com كـ Publisher
+       2) من "Manage Site & Zones" دير Add Site وحط رابط الموقع ديالك
+       3) من بعد التحقق (verification)، دير Add Zone واختار النوع
+          (In-Page Push أو Banner أنسب لهاد الأداة، ماشي Popunder)
+       4) HilltopAds غادي يعطيوك كود <script> خاص بالـ zone
+       5) بدّل الـ div تحت (id="adSlot") بالكود ديالهم كامل
+       ==================================================================== -->
+  <div class="ad-slot" id="adSlot">
+    <span class="ad-label">مساحة إعلانية — HilltopAds</span>
+  </div>
+
+  <footer>
+    الأسعار تقريبية ومبنية على متوسط السوق ليوليوز 2026 — للمعاملات الحقيقية، تأكد من السعر عند الصرافة أو البنك.
+  </footer>
+</div>
+
+<script>
+  // MAD value of 1 unit of each currency (approx, July 2026 mid-market)
+  const rates = {
+    USD: { label: "الدولار الأمريكي (USD)", rate: 9.35 },
+    EUR: { label: "اليورو (EUR)", rate: 10.70 },
+    GBP: { label: "الجنيه الإسترليني (GBP)", rate: 12.50 },
+    CAD: { label: "الدولار الكندي (CAD)", rate: 6.84 },
+    AED: { label: "الدرهم الإماراتي (AED)", rate: 2.55 },
+    SAR: { label: "الريال السعودي (SAR)", rate: 2.49 },
+  };
+
+  const fromSel = document.getElementById('fromCurrency');
+  const toSel = document.getElementById('toCurrency');
+  const amountEl = document.getElementById('amount');
+  const resultEl = document.getElementById('resultValue');
+  const rateNoteEl = document.getElementById('rateNote');
+  const fromUnitEl = document.getElementById('fromUnit');
+  const customRateEl = document.getElementById('customRate');
+  const manualBox = document.getElementById('manualRate');
+  const toggleBtn = document.getElementById('toggleManual');
+  const swapBtn = document.getElementById('swapBtn');
+
+  let direction = 'toMad'; // 'toMad' = foreign -> MAD, 'fromMad' = MAD -> foreign
+  let overrideRate = null;
+
+  function buildOptions(){
+    const currencyKeys = Object.keys(rates);
+
+    fromSel.innerHTML = '';
+    toSel.innerHTML = '';
+
+    if (direction === 'toMad') {
+      currencyKeys.forEach(k => {
+        const o = document.createElement('option');
+        o.value = k; o.textContent = rates[k].label;
+        fromSel.appendChild(o);
+      });
+      const madOpt = document.createElement('option');
+      madOpt.value = 'MAD'; madOpt.textContent = 'الدرهم المغربي (MAD)';
+      toSel.appendChild(madOpt);
+      toSel.disabled = true;
+    } else {
+      const madOpt = document.createElement('option');
+      madOpt.value = 'MAD'; madOpt.textContent = 'الدرهم المغربي (MAD)';
+      fromSel.appendChild(madOpt);
+      fromSel.disabled = true;
+      currencyKeys.forEach(k => {
+        const o = document.createElement('option');
+        o.value = k; o.textContent = rates[k].label;
+        toSel.appendChild(o);
+      });
+    }
+  }
+
+  function currentForeignKey(){
+    return direction === 'toMad' ? fromSel.value : toSel.value;
+  }
+
+  function updateUnitLabel(){
+    fromUnitEl.textContent = direction === 'toMad' ? currentForeignKey() : 'د.م.';
+  }
+
+  function calc(){
+    const amount = parseFloat(amountEl.value) || 0;
+    const key = currentForeignKey();
+    const rate = overrideRate !== null ? overrideRate : (rates[key] ? rates[key].rate : 1);
+
+    let result;
+    if (direction === 'toMad') {
+      result = amount * rate;
+      resultEl.textContent = result.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' د.م.';
+      rateNoteEl.textContent = `1 ${key} = ${rate.toFixed(4)} د.م.`;
+    } else {
+      result = amount / rate;
+      resultEl.textContent = result.toLocaleString('en-US', {maximumFractionDigits: 2}) + ' ' + key;
+      rateNoteEl.textContent = `1 ${key} = ${rate.toFixed(4)} د.م.`;
+    }
+    updateUnitLabel();
+  }
+
+  fromSel.addEventListener('change', () => { overrideRate = null; customRateEl.value=''; calc(); });
+  toSel.addEventListener('change', () => { overrideRate = null; customRateEl.value=''; calc(); });
+  amountEl.addEventListener('input', calc);
+
+  swapBtn.addEventListener('click', () => {
+    const key = currentForeignKey();
+    direction = direction === 'toMad' ? 'fromMad' : 'toMad';
+    overrideRate = null;
+    customRateEl.value = '';
+    buildOptions();
+    if (rates[key]) {
+      fromSel.value = direction === 'toMad' ? key : 'MAD';
+      toSel.value = direction === 'toMad' ? 'MAD' : key;
+    }
+    calc();
+  });
+
+  toggleBtn.addEventListener('click', () => {
+    manualBox.classList.toggle('open');
+  });
+
+  customRateEl.addEventListener('input', () => {
+    const v = parseFloat(customRateEl.value);
+    overrideRate = isNaN(v) ? null : v;
+    calc();
+  });
+
+  buildOptions();
+  calc();
+</script>
+
+</body>
+</html>
